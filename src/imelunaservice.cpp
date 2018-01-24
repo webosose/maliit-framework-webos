@@ -592,7 +592,7 @@ void IMELunaService::startService()
 
     LSErrorWrapper err;
 
-    if (!LSRegisterPubPriv(IMELunaService::ServiceName, &m_handle, false /* private bus */, err)) {
+    if (!LSRegister(IMELunaService::ServiceName, &m_handle, err)) {
         qCritical() << "failed to register on bus: " << err.message();
         return;
     }

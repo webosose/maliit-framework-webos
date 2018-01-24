@@ -599,6 +599,7 @@ void inputMethodContextCommit(void *data,
     d->handleInputMethodContextCommit();
 }
 
+/* Not implemented in LSM
 void inputMethodContextPreferredLanguage(void *data,
                                          input_method_context *context,
                                          const char *language)
@@ -609,6 +610,7 @@ void inputMethodContextPreferredLanguage(void *data,
     Q_UNUSED(context);
     d->handleInputMethodContextPreferredLanguage(language);
 }
+*/
 
 void inputMethodContextMaxTextLength(void *data,
                                        input_method_context *context,
@@ -853,7 +855,8 @@ const wl_keyboard_listener input_method_keyboard_listener = {
     NULL, /* enter */
     NULL, /* leave */
     inputMethodKeyboardKey,
-    inputMethodKeyboardModifiers
+    inputMethodKeyboardModifiers,
+    NULL  /* repeat_info */
 };
 
 void MInputContextWestonIMProtocolConnectionPrivate::processKeyMap(uint32_t format, uint32_t fd, uint32_t size)

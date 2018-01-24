@@ -64,17 +64,6 @@ namespace
 
         return result;
     }
-
-    QSet<QString> findEnabledPlugins(const QList<MImOnScreenPlugins::SubView> &enabledSubViews)
-    {
-        QSet<QString> result;
-
-        Q_FOREACH (const MImOnScreenPlugins::SubView &subView, enabledSubViews) {
-            result.insert(subView.plugin);
-        }
-
-        return result;
-    }
 }
 
 MImOnScreenPlugins::SubView::SubView()

@@ -40,6 +40,7 @@ void disableMInputContextPlugin()
     setenv("QT_IM_MODULE", "none", true);
 }
 
+#ifndef HAS_PMLOGLIB
 bool isDebugEnabled()
 {
     static int debugEnabled = -1;
@@ -55,6 +56,7 @@ bool isDebugEnabled()
 
     return debugEnabled == 1;
 }
+#endif
 
 #ifdef HAS_PMLOGLIB
 void outputMessages(QtMsgType type,
@@ -64,9 +66,6 @@ void outputMessages(QtMsgType type,
     PmLogContext pmContext;
     PmLogGetContext("IME", &pmContext);
     static const char *msgId = "default";
-
-    // Length will be an arbitrary short string with length 5-16
-    static const int MSGID_LENGTH = 15;
 
     QString funcName = QString("unknown");
     QStringList parser = QString(context.function).split('(', QString::SkipEmptyParts);
@@ -126,6 +125,7 @@ void outputMessages(QtMsgType type,
 
 QSharedPointer<MInputContextConnection> createConnection(const MImServerConnectionOptions &options)
 {
+    Q_UNUSED(options);
 #ifdef HAVE_WAYLAND
     if (QGuiApplication::platformName().startsWith("wayland")) {
         return QSharedPointer<MInputContextConnection>(Maliit::createWestonIMProtocolConnection());

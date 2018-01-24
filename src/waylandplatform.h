@@ -29,6 +29,7 @@ class WaylandPlatform : public AbstractPlatform
 
 public:
     WaylandPlatform();
+    virtual ~WaylandPlatform();
 
     virtual void setupInputPanel(QWindow* window,
                                  Maliit::Position position);

@@ -181,6 +181,10 @@ WaylandPlatform::WaylandPlatform()
     : d_ptr(new WaylandPlatformPrivate)
 {}
 
+WaylandPlatform::~WaylandPlatform()
+{
+}
+
 void WaylandPlatform::setupInputPanel(QWindow* window,
                                       Maliit::Position position)
 {

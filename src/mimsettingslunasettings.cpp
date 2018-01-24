@@ -202,7 +202,7 @@ void MImSettingsLunaSettingsBackendFactory::subscribeSettings(const QString &key
     LSErrorInit(&error);
     LSMessageToken token;
 
-    if (m_subscriptionMap.contains(key) && m_subscriptionMap.value(key) != NULL)
+    if (m_subscriptionMap.contains(key) && m_subscriptionMap.value(key) != LSMESSAGE_TOKEN_INVALID)
         return;
 
     const LunaServiceRequestInfoMap *map;
@@ -228,16 +228,15 @@ void MImSettingsLunaSettingsBackendFactory::subscribeSettings(const QString &key
 
 void MImSettingsLunaSettingsBackendFactory::unsubscribeSettings(const QString &key)
 {
-    bool ret;
     LSError error;
     LSErrorInit(&error);
     LSMessageToken token;
 
-    if (m_subscriptionMap.contains(key) && m_subscriptionMap.value(key) != NULL) {
+    if (m_subscriptionMap.contains(key) && m_subscriptionMap.value(key) != LSMESSAGE_TOKEN_INVALID) {
         token = (LSMessageToken)m_subscriptionMap.value(key);
-        ret = LSCallCancel(m_handle, token, &error);
+        LSCallCancel(m_handle, token, &error);
 
-        m_subscriptionMap.insert(key, NULL);
+        m_subscriptionMap.insert(key, LSMESSAGE_TOKEN_INVALID);
     }
 }
 

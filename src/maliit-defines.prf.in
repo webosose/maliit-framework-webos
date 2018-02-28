@@ -1,0 +1,8 @@
+# This fime contains macro definitions that might be needed for plugins.
+# It is made separated, so one can load it eagerly with load() function
+# without risk to affect building part.
+MALIIT_PREFIX=@PREFIX@
+MALIIT_PLUGINS_DIR = @MALIIT_PLUGINS_DIR@
+MALIIT_PLUGINS_DATA_DIR = @MALIIT_PLUGINS_DATA_DIR@
+MALIIT_DATA_DIR = @MALIIT_DATA_DIR@
+MALIIT_INSTALL_LIBS = @LIBDIR@

@@ -62,8 +62,6 @@ contains(QT_MAJOR_VERSION, 4) {
     }
 }
 
-SUBDIRS += upstart
-
 QMAKE_EXTRA_TARGETS += check-xml
 check-xml.target = check-xml
 check-xml.CONFIG = recursive

@@ -418,6 +418,8 @@ struct MInputContextWestonIMProtocolConnectionPrivate
     void handleInputMethodActivate(input_method_context *context,
                                    uint32_t serial);
     void handleInputMethodDeactivate(input_method_context *context);
+    void handleInputMethodShowInputPanel(input_method_context *context);
+    void handleInputMethodHideInputPanel(input_method_context *context);
     void handleInputMethodContextSurroundingText(const char *text,
                                                  uint32_t cursor,
                                                  uint32_t anchor);
@@ -525,9 +527,33 @@ void inputMethodDeactivate(void *data,
     d->handleInputMethodDeactivate(context);
 }
 
+void inputMethodShowInputPanel(void *data,
+                           input_method *input_method,
+                           input_method_context *context)
+{
+    MInputContextWestonIMProtocolConnectionPrivate *d =
+        static_cast<MInputContextWestonIMProtocolConnectionPrivate *>(data);
+
+    Q_UNUSED(input_method);
+    d->handleInputMethodShowInputPanel(context);
+}
+
+void inputMethodHideInputPanel(void *data,
+                           input_method *input_method,
+                           input_method_context *context)
+{
+    MInputContextWestonIMProtocolConnectionPrivate *d =
+        static_cast<MInputContextWestonIMProtocolConnectionPrivate *>(data);
+
+    Q_UNUSED(input_method);
+    d->handleInputMethodHideInputPanel(context);
+}
+
 const input_method_listener maliit_input_method_listener = {
     inputMethodActivate,
-    inputMethodDeactivate
+    inputMethodDeactivate,
+    inputMethodShowInputPanel,
+    inputMethodHideInputPanel
 };
 
 void inputMethodContextSurroundingText(void *data,
@@ -1152,6 +1178,26 @@ void MInputContextWestonIMProtocolConnectionPrivate::handleInputMethodActivate(i
     q->updateWidgetInformation(connection_id, state_info, true);
     q->activateContext(connection_id);
     q->showInputMethod(connection_id);
+}
+
+void MInputContextWestonIMProtocolConnectionPrivate::handleInputMethodShowInputPanel(input_method_context *context)
+{
+    Q_Q(MInputContextWestonIMProtocolConnection);
+    qDebug() << "context" << (long)context;
+    if (!im_context) {
+        return;
+    }
+    q->showInputMethod(connection_id);
+}
+
+void MInputContextWestonIMProtocolConnectionPrivate::handleInputMethodHideInputPanel(input_method_context *context)
+{
+    Q_Q(MInputContextWestonIMProtocolConnection);
+    qDebug() << "context" << (long)context;
+    if (!im_context) {
+        return;
+    }
+    q->hideInputMethod(connection_id);
 }
 
 void MInputContextWestonIMProtocolConnectionPrivate::handleInputMethodDeactivate(input_method_context *context)

@@ -18,6 +18,7 @@
 #include <maliit/plugins/abstractinputmethod.h>
 #include "webosloginfo.h"
 #include "windowgroup.h"
+#include "mimglobalsettings.h"
 
 #include <maliit/namespace.h>
 
@@ -264,4 +265,19 @@ AbstractPluginSetting *MInputMethodHost::registerPluginSetting(const QString &ke
                                                                const QVariantMap &attributes)
 {
     return pluginManager->registerPluginSetting(pluginId, pluginDescription, key, description, type, attributes);
+}
+
+int MInputMethodHost::instanceId() const
+{
+    return MImGlobalSettings::instance()->getInstanceId();
+}
+
+QString MInputMethodHost::appId() const
+{
+    return MImGlobalSettings::instance()->getAppId();
+}
+
+QString MInputMethodHost::serviceName() const
+{
+    return MImGlobalSettings::instance()->getServiceName();
 }

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2013 LG Electronics, Inc.
+*      Copyright (c) 2013-2019 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
 #include "imelunaservice.h"
 #include "minputcontextconnection.h"
 #include "luna-service2/lunaservice.h"
+#include "mimglobalsettings.h"
 
-const char *IMELunaService::ServiceName = "com.webos.service.ime";
 const char *IMELunaService::SubscriberKey = "REMOTE_KEYBOARD_LIST";
 
 #include <QJsonObject>
@@ -589,11 +589,19 @@ void IMELunaService::startService()
 {
     GMainContext *context = g_main_context_default();
     m_mainLoop = g_main_loop_new(context, TRUE);
-
+    bool ret;
     LSErrorWrapper err;
 
-    if (!LSRegister(IMELunaService::ServiceName, &m_handle, err)) {
-        qCritical() << "failed to register on bus: " << err.message();
+    // TODO :
+    // Currently, only MaliitServer with instanceId 0 can serve an LS2 service.
+    // instanceId 0 means 'primary service' with service name of com.webos.service.ime.
+    // Other instances will have service name as com.webos.service.ime-n where n is the instanceId.
+    ret = LSRegister(MImGlobalSettings::instance()->getServiceName().toLatin1().data(), &m_handle, err);
+
+    qInfo() << "MaliitServer: Starting IMELunaService [" << MImGlobalSettings::instance()->getServiceName() << "], instance:" << MImGlobalSettings::instance()->getInstanceId();
+
+    if (!ret) {
+        qCritical() << "failed to register [" << MImGlobalSettings::instance()->getServiceName() << "] on bus: " << err.message();
         return;
     }
 
@@ -617,5 +625,5 @@ void IMELunaService::startService()
         return;
     }
 
-    qWarning() << IMELunaService::ServiceName << "LS2 service running";
+    qWarning() << MImGlobalSettings::instance()->getServiceName() << " LS2 service running";
 }

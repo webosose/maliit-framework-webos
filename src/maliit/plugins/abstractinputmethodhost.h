@@ -330,6 +330,21 @@ public:
                                                                           Maliit::SettingEntryType type,
                                                                           const QVariantMap &attributes) = 0;
 
+    /*!
+     * \brief Get instance ID starting from 0.
+     */
+    virtual int instanceId() const = 0;
+
+    /*!
+     * \brief Get base appId.
+     */
+    virtual QString appId() const = 0;
+
+    /*!
+     * \brief Get serviceName of current instance.
+     */
+    virtual QString serviceName() const = 0;
+
 private:
     Q_DISABLE_COPY(MAbstractInputMethodHost)
     Q_DECLARE_PRIVATE(MAbstractInputMethodHost)

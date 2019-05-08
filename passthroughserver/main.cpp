@@ -17,6 +17,7 @@
 #include "connectionfactory.h"
 #include "mimserver.h"
 #include "mimserveroptions.h"
+#include "mimglobalsettings.h"
 #ifndef NOXCB
 #include "xcbplatform.h"
 #endif
@@ -183,6 +184,10 @@ int main(int argc, char **argv)
     } else if (not allRecognized) {
         printHelpMessage();
     }
+
+    // Create Singleton globalsettings & put instanceId.
+    MImGlobalSettings::instance()->setInstanceId(connectionOptions.instanceId);
+    qInfo() << "MaliitServer: Using instance number " << MImGlobalSettings::instance()->getInstanceId();
 
     QGuiApplication app(argc, argv);
 

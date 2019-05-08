@@ -40,6 +40,7 @@ public:
     //! Contains true if user asks for help or provided incorrect parameter
     bool allowAnonymous;
     QString overriddenAddress;
+    int instanceId;
 };
 
 

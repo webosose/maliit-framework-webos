@@ -31,7 +31,8 @@ namespace {
 
     CommandLineParameter AvailableConnectionParameters[] = {
         { "-allow-anonymous",   "Allow anonymous/unauthenticated use of DBus interface"},
-        { "-override-address",  "Override the DBus peer-to-peer address for input-context"}
+        { "-override-address",  "Override the DBus peer-to-peer address for input-context"},
+        { "-instance",          "Set a numeric ID for this instance"}
     };
 
     struct IgnoredParameter {
@@ -336,6 +337,9 @@ MImServerConnectionOptionsParser::parseParameter(const char *parameter,
     const int count = sizeof(AvailableConnectionParameters) / sizeof(AvailableConnectionParameters[0]);
     ParsingResult result = Invalid;
 
+    // Explicitly initialize for instance Id
+    storage->instanceId = 0;
+
     for (int i = 0; i < count; ++i) {
         const char * const availableParameter = AvailableConnectionParameters[i].name;
 
@@ -352,6 +356,15 @@ MImServerConnectionOptionsParser::parseParameter(const char *parameter,
                     *argumentCount = 1;
                 } else {
                     fprintf(stderr, "ERROR: No argument passed to -override-address\n");
+                    *argumentCount = 0;
+                }
+            } else if (!strcmp(parameter, "-instance")) {
+                if (next) {
+                    QString param = QString::fromUtf8(next);
+                    storage->instanceId = param.toInt();
+                    *argumentCount = 1;
+                } else {
+                    fprintf(stderr, "ERROR: No argument passed to -instance\n");
                     *argumentCount = 0;
                 }
             } else {

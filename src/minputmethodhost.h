@@ -104,6 +104,9 @@ public:
                                                          const QString &description,
                                                          Maliit::SettingEntryType type,
                                                          const QVariantMap &attributes);
+    virtual int instanceId() const;
+    virtual QString appId() const;
+    virtual QString serviceName() const;
     // \reimp_end
 
 private:

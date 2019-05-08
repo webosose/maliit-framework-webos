@@ -1,6 +1,6 @@
 /* @@@LICENSE
  *
- *      Copyright (c) 2013-2017 LG Electronics, Inc.
+ *      Copyright (c) 2013-2019 LG Electronics, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 #include <QJsonArray>
 
 #include "webosloginfo.h"
+#include "mimglobalsettings.h"
 
 #include <QDebug>
 
@@ -288,7 +289,9 @@ void MImSettingsLunaSettingsBackendFactory::registerService()
     LSError error;
     LSErrorInit(&error);
 
-    ret = LSRegister("com.webos.service.ime.settings", &m_handle, &error);
+    qInfo() << "MaliitServer: appId for gathering settings : " << MImGlobalSettings::instance()->getAppIdForSettingsService();
+
+    ret = LSRegister(MImGlobalSettings::instance()->getAppIdForSettingsService().toLatin1().data(), &m_handle, &error);
 
     if (!ret) {
         g_critical("Failed to register handler: %s", error.message);

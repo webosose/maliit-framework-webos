@@ -46,6 +46,7 @@ SERVER_SOURCES += \
         mimserver.cpp \
 
 SERVER_HEADERS_PRIVATE += \
+        mimglobalsettings.h \
         mimpluginmanager.h \
         mimpluginmanager_p.h \
         minputmethodhost.h \
@@ -63,6 +64,7 @@ SERVER_HEADERS_PRIVATE += \
         unknownplatform.h \
 
 SERVER_SOURCES += \
+        mimglobalsettings.cpp \
         mimpluginmanager.cpp \
         minputmethodhost.cpp \
         mattributeextensionid.cpp \

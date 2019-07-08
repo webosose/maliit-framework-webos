@@ -36,7 +36,7 @@ MInputMethodHost::MInputMethodHost(const QSharedPointer<MInputContextConnection>
       pluginDescription(description),
       mWindowGroup(windowGroup)
 {
-    // nothing
+    connection->setDisplayId(instanceId());
 }
 
 

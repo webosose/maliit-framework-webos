@@ -411,6 +411,7 @@ struct MInputContextWestonIMProtocolConnectionPrivate
     MInputContextWestonIMProtocolConnectionPrivate(MInputContextWestonIMProtocolConnection *connection);
     ~MInputContextWestonIMProtocolConnectionPrivate();
 
+    void setDisplayId(int displayId);
     void handleRegistryGlobal(uint32_t name,
                               const char *interface,
                               uint32_t version);
@@ -469,6 +470,7 @@ struct MInputContextWestonIMProtocolConnectionPrivate
     } xkb;
 
     Qt::KeyboardModifiers modifiers;
+    int m_displayId;
 };
 
 namespace {
@@ -772,7 +774,8 @@ MInputContextWestonIMProtocolConnectionPrivate::MInputContextWestonIMProtocolCon
       im_serial(0),
       selection(),
       mods(),
-      state_info()
+      state_info(),
+      m_displayId(-1)
 {
     display = static_cast<wl_display *>(QGuiApplication::platformNativeInterface()->nativeResourceForIntegration("display"));
     if (!display) {
@@ -810,6 +813,11 @@ MInputContextWestonIMProtocolConnectionPrivate::~MInputContextWestonIMProtocolCo
     }
 }
 
+void MInputContextWestonIMProtocolConnectionPrivate::setDisplayId(int displayId)
+{
+    m_displayId = displayId;
+}
+
 void MInputContextWestonIMProtocolConnectionPrivate::handleRegistryGlobal(uint32_t name,
                                                                           const char *interface,
                                                                           uint32_t version)
@@ -818,8 +826,9 @@ void MInputContextWestonIMProtocolConnectionPrivate::handleRegistryGlobal(uint32
 
     qDebug() << "Name:" << name << "Interface:" << interface;
     if (!strcmp(interface, "input_method")) {
-        im = static_cast<input_method *>(wl_registry_bind(registry, name, &input_method_interface, 1));
+        im = static_cast<input_method *>(wl_registry_bind(registry, name, &input_method_interface, 2));
         input_method_add_listener(im, &maliit_input_method_listener, this);
+        input_method_set_display_id(im, m_displayId);
     }
 }
 
@@ -1325,6 +1334,13 @@ MInputContextWestonIMProtocolConnection::MInputContextWestonIMProtocolConnection
 
 MInputContextWestonIMProtocolConnection::~MInputContextWestonIMProtocolConnection()
 {
+}
+
+void MInputContextWestonIMProtocolConnection::setDisplayId(int displayId)
+{
+    Q_D(MInputContextWestonIMProtocolConnection);
+
+    d->setDisplayId(displayId);
 }
 
 void MInputContextWestonIMProtocolConnection::sendPreeditString(const QString &string,

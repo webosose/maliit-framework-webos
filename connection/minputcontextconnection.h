@@ -41,6 +41,8 @@ public:
     explicit MInputContextConnection(QObject *parent = 0);
     virtual ~MInputContextConnection();
 
+    virtual void setDisplayId(int displayId) {}
+
     /*!
      * \brief Returns focus state if output parameter \a valid is \c true.
      *

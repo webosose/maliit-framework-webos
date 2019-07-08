@@ -36,6 +36,7 @@ public:
     explicit MInputContextWestonIMProtocolConnection();
     virtual ~MInputContextWestonIMProtocolConnection();
 
+    void setDisplayId(int displayId);
     virtual bool focusState(bool &valid);
     virtual int contentType(bool &valid);
     virtual int enterKeyType(bool &valid);

@@ -337,9 +337,6 @@ MImServerConnectionOptionsParser::parseParameter(const char *parameter,
     const int count = sizeof(AvailableConnectionParameters) / sizeof(AvailableConnectionParameters[0]);
     ParsingResult result = Invalid;
 
-    // Explicitly initialize for instance Id
-    storage->instanceId = 0;
-
     for (int i = 0; i < count; ++i) {
         const char * const availableParameter = AvailableConnectionParameters[i].name;
 
@@ -391,6 +388,7 @@ void MImServerConnectionOptionsParser::printAvailableOptions(const char *format)
 }
 MImServerConnectionOptions::MImServerConnectionOptions()
     : allowAnonymous(false)
+    , instanceId(0)
 {
     const ParserBasePtr p(new MImServerConnectionOptionsParser(this));
     parsers.append(p);

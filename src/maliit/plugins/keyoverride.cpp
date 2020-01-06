@@ -51,7 +51,7 @@ MKeyOverride::~MKeyOverride()
     delete d_ptr;
 }
 
-const MKeyOverride & MKeyOverride::operator=(const MKeyOverride &other)
+MKeyOverride &MKeyOverride::operator=(const MKeyOverride &other)
 {
     Q_D(MKeyOverride);
 

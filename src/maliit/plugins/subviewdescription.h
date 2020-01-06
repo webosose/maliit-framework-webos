@@ -32,7 +32,7 @@ public:
     virtual ~MImSubViewDescription();
 
     //! Assignment operator
-    void operator=(const MImSubViewDescription &other);
+    MImSubViewDescription &operator=(const MImSubViewDescription &other);
 
     //! Returns true if \a left and \a right describe the same subview.
     friend bool operator==(const MImSubViewDescription &left, const MImSubViewDescription &right);

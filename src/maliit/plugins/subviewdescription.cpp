@@ -57,9 +57,11 @@ MImSubViewDescription::~MImSubViewDescription()
     delete d_ptr;
 }
 
-void MImSubViewDescription::operator=(const MImSubViewDescription &other)
+MImSubViewDescription &MImSubViewDescription::operator=(const MImSubViewDescription &other)
 {
     *d_ptr = *other.d_ptr;
+
+    return *this;
 }
 
 bool operator==(const MImSubViewDescription &left, const MImSubViewDescription &right)

@@ -64,7 +64,7 @@ public:
     /*
      * \brief Assignment operator
      */
-    const MKeyOverride &operator=(const MKeyOverride &other);
+    MKeyOverride &operator=(const MKeyOverride &other);
 
     /*!
      * \brief Returns the key id.

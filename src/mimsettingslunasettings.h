@@ -1,6 +1,6 @@
 /* @@@LICENSE
  *
- *      Copyright (c) 2013-2017 LG Electronics, Inc.
+ *      Copyright (c) 2013-2020 LG Electronics, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,8 @@ public:
     explicit MImSettingsLunaSettingsBackendFactory();
     explicit MImSettingsLunaSettingsBackendFactory(const QString &organization, const QString &application);
     virtual ~MImSettingsLunaSettingsBackendFactory();
+    MImSettingsLunaSettingsBackendFactory(const MImSettingsLunaSettingsBackendFactory&) = delete;
+    MImSettingsLunaSettingsBackendFactory &operator=(const MImSettingsLunaSettingsBackendFactory&) = delete;
     virtual MImSettingsBackend *create(const QString &key, const MImSettings::Group group, QObject *parent);
 
     bool serverConnectCallback(LSHandle *handle, LSMessage *message, void *ctx);

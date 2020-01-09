@@ -665,11 +665,11 @@ const input_method_context_listener maliit_input_method_context_listener = {
     inputMethodContextSurroundingText,
     inputMethodContextReset,
     inputMethodContextContentType,
-    inputMethodContextEnterKeyType,
     inputMethodContextInvokeAction,
     inputMethodContextCommit,
     inputMethodContextMaxTextLength,
-    inputMethodContextPlatformData
+    inputMethodContextPlatformData,
+    inputMethodContextEnterKeyType
 /* Not implemented in LSM
     inputMethodContextPreferredLanguage
 */

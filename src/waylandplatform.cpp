@@ -153,6 +153,9 @@ void WaylandPlatformPrivate::setupInputSurface(QWindow *window,
                                                Maliit::Position position,
                                                bool avoid_crash)
 {
+    if (!window)
+        return;
+
     struct wl_surface *surface = avoid_crash ? 0 : static_cast<struct wl_surface *>(QGuiApplication::platformNativeInterface()->nativeResourceForWindow("surface", window));
 
     if (not surface) {

@@ -32,11 +32,19 @@ QString MImGlobalSettings::getAppId() const {
 }
 
 QString MImGlobalSettings::getServiceName() const {
-    if(getInstanceId() > 0)
+    if (getNoLS2Service())
         return getAppId() + m_separator + QString::number(getInstanceId());
     return getAppId();
 }
 
 QString MImGlobalSettings::getAppIdForSettingsService() const {
     return getServiceName() + "." + m_settingsSuffix;
+}
+
+bool MImGlobalSettings::getNoLS2Service() const {
+    return m_noLS2Service;
+}
+
+void MImGlobalSettings::setNoLS2Service(bool value) {
+    m_noLS2Service = value;
 }

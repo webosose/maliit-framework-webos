@@ -32,7 +32,8 @@ namespace {
     CommandLineParameter AvailableConnectionParameters[] = {
         { "-allow-anonymous",   "Allow anonymous/unauthenticated use of DBus interface"},
         { "-override-address",  "Override the DBus peer-to-peer address for input-context"},
-        { "-instance",          "Set a numeric ID for this instance"}
+        { "-instance",          "Set a numeric ID for this instance"},
+        { "-no-ls2-service",    "Do not start ls2-service"}
     };
 
     struct IgnoredParameter {
@@ -364,6 +365,9 @@ MImServerConnectionOptionsParser::parseParameter(const char *parameter,
                     fprintf(stderr, "ERROR: No argument passed to -instance\n");
                     *argumentCount = 0;
                 }
+            } else if (!strcmp(parameter, "-no-ls2-service")) {
+                storage->noLS2Service = true;
+                *argumentCount = 0;
             } else {
                 fprintf(stderr, "ERROR: connection option %s declared but unhandled\n", parameter);
             }
@@ -389,6 +393,7 @@ void MImServerConnectionOptionsParser::printAvailableOptions(const char *format)
 MImServerConnectionOptions::MImServerConnectionOptions()
     : allowAnonymous(false)
     , instanceId(0)
+    , noLS2Service(false)
 {
     const ParserBasePtr p(new MImServerConnectionOptionsParser(this));
     parsers.append(p);

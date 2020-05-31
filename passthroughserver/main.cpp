@@ -189,6 +189,8 @@ int main(int argc, char **argv)
     MImGlobalSettings::instance()->setInstanceId(connectionOptions.instanceId);
     qInfo() << "MaliitServer: Using instance number " << MImGlobalSettings::instance()->getInstanceId();
 
+    MImGlobalSettings::instance()->setNoLS2Service(connectionOptions.noLS2Service);
+
     QGuiApplication app(argc, argv);
 
     // Input Context Connection

@@ -41,6 +41,7 @@ public:
     bool allowAnonymous;
     QString overriddenAddress;
     int instanceId;
+    bool noLS2Service;
 };
 
 

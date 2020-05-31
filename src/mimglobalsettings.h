@@ -65,11 +65,23 @@ public:
      */
     void setInstanceId(int instanceId);
 
+    /*!
+     * \brief Set bool value whether ls2 service is allowed or not.
+     * \param value true if allowed or false.
+     */
+    void setNoLS2Service(bool value);
+
+    /*!
+     * \brief Get no-ls2-service.
+     */
+    bool getNoLS2Service() const;
+
 private:
     int m_instanceId = 0;
     const QString m_appId = "com.webos.service.ime";
     const QString m_settingsSuffix = "settings";
     const QString m_separator = "_";
+    bool m_noLS2Service = false;
 };
 
 #endif // MIMGLOBALSETTINGS_H

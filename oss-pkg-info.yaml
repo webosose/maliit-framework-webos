@@ -1,5 +1,5 @@
 Open Source Software Package:
-- name: webOSOSE-maliit-framework-webos
+- name: maliit-framework
   version: 0.99.0
-  source: https://github.com/webosose/maliit-framework-webos
-  license: LGPL-2.0
+  source: https://github.com/maliit/framework
+  license: LGPL-2.1

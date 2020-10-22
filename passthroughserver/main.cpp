@@ -66,12 +66,21 @@ void outputMessages(QtMsgType type,
     static const char *msgId = "default";
 
     QString funcName = QString("unknown");
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QStringList parser = QString(context.function).split(QChar('('), Qt::SkipEmptyParts);
+    if (!parser.isEmpty()) {
+        parser = parser.first().split(QChar(' '), Qt::SkipEmptyParts);
+        if (!parser.isEmpty())
+            funcName = parser.last();
+    }
+#else
     QStringList parser = QString(context.function).split(QChar('('), QString::SkipEmptyParts);
     if (!parser.isEmpty()) {
         parser = parser.first().split(QChar(' '), QString::SkipEmptyParts);
         if (!parser.isEmpty())
             funcName = parser.last();
     }
+#endif
 
     switch (type) {
     case QtDebugMsg:

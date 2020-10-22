@@ -219,7 +219,7 @@ void WaylandPlatform::setInputRegion(QWindow* window,
     wl_compositor *wlcompositor = static_cast<wl_compositor *>(wliface->nativeResourceForIntegration("compositor"));
     wl_region *wlregion = wl_compositor_create_region(wlcompositor);
 
-    Q_FOREACH (const QRect &rect, region.rects()) {
+    for (auto &rect: region) {
         wl_region_add(wlregion, rect.x(), rect.y(),
                       rect.width(), rect.height());
     }

@@ -22,6 +22,8 @@
 #include <QtCore>
 #include <QWindow>
 
+#include <maliit/settingdata.h>
+
 class QKeyEvent;
 
 class MInputContextConnectionPrivate;

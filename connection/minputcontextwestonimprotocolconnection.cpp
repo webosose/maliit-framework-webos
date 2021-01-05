@@ -453,21 +453,21 @@ struct MInputContextWestonIMProtocolConnectionPrivate
     QMap<QString, QVariant> state_info;
 
     struct {
-        xkb_context *context;
-        xkb_keymap *keymap;
-        xkb_state *state;
+        xkb_context *context = nullptr;
+        xkb_keymap *keymap = nullptr;
+        xkb_state *state = nullptr;
 
-        xkb_mod_index_t shift_mod;
-        xkb_mod_index_t caps_mod;
-        xkb_mod_index_t ctrl_mod;
-        xkb_mod_index_t alt_mod;
-        xkb_mod_index_t mod2_mod;
-        xkb_mod_index_t mod3_mod;
-        xkb_mod_index_t super_mod;
-        xkb_mod_index_t mod5_mod;
-        xkb_led_index_t num_led;
-        xkb_led_index_t caps_led;
-        xkb_led_index_t scroll_led;
+        xkb_mod_index_t shift_mod = 0;
+        xkb_mod_index_t caps_mod = 0;
+        xkb_mod_index_t ctrl_mod = 0;
+        xkb_mod_index_t alt_mod = 0;
+        xkb_mod_index_t mod2_mod = 0;
+        xkb_mod_index_t mod3_mod = 0;
+        xkb_mod_index_t super_mod = 0;
+        xkb_mod_index_t mod5_mod = 0;
+        xkb_led_index_t num_led = 0;
+        xkb_led_index_t caps_led = 0;
+        xkb_led_index_t scroll_led = 0;
     } xkb;
 
     Qt::KeyboardModifiers modifiers;
@@ -788,8 +788,6 @@ MInputContextWestonIMProtocolConnectionPrivate::MInputContextWestonIMProtocolCon
     // QtWayland will do dispatching for us.
 
     xkb.context = xkb_context_new(XKB_CONTEXT_NO_DEFAULT_INCLUDES);
-    xkb.keymap = 0;
-    xkb.state = 0;
 }
 
 MInputContextWestonIMProtocolConnectionPrivate::~MInputContextWestonIMProtocolConnectionPrivate()

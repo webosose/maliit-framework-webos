@@ -27,7 +27,7 @@ public:
     explicit MImServerPrivate();
 
     // Manager for loading and handling all plugins
-    MIMPluginManager *pluginManager;
+    MIMPluginManager *pluginManager = nullptr;
 
     // Connection to application side (input-context)
     QSharedPointer<MInputContextConnection> icConnection;
@@ -39,7 +39,8 @@ private:
 };
 
 MImServerPrivate::MImServerPrivate()
-{}
+{
+}
 
 MImServer::MImServer(const QSharedPointer<MInputContextConnection> &icConnection,
                      const QSharedPointer<Maliit::AbstractPlatform> &platform,

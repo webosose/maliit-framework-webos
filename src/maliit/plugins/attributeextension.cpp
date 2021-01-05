@@ -21,6 +21,7 @@
 
 MAttributeExtensionPrivate::MAttributeExtensionPrivate()
     : id()
+    , q_ptr(nullptr)
 {
 }
 

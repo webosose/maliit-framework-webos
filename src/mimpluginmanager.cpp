@@ -72,6 +72,7 @@ MIMPluginManagerPrivate::MIMPluginManagerPrivate(const QSharedPointer<MInputCont
       imAccessoryEnabledConf(0),
       shutDownInterval(0),
       isStaticService(0),
+      adaptor(nullptr),
       q_ptr(0),
       visible(false),
       onScreenPlugins(),

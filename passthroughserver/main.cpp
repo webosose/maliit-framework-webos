@@ -66,9 +66,9 @@ void outputMessages(QtMsgType type,
     static const char *msgId = "default";
 
     QString funcName = QString("unknown");
-    QStringList parser = QString(context.function).split('(', QString::SkipEmptyParts);
+    QStringList parser = QString(context.function).split(QChar('('), QString::SkipEmptyParts);
     if (!parser.isEmpty()) {
-        parser = parser.first().split(' ', QString::SkipEmptyParts);
+        parser = parser.first().split(QChar(' '), QString::SkipEmptyParts);
         if (!parser.isEmpty())
             funcName = parser.last();
     }

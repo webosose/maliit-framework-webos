@@ -58,8 +58,8 @@ namespace
         QList<MImOnScreenPlugins::SubView> result;
 
         Q_FOREACH (const QString &value, list) {
-            QString plugin = value.section(':', 0, 0);
-            QString subview = value.section(':', 1, -1);
+            QString plugin = value.section(QChar(':'), 0, 0);
+            QString subview = value.section(QChar(':'), 1, -1);
 
             result.push_back(MImOnScreenPlugins::SubView(plugin, subview));
         }
@@ -281,7 +281,7 @@ void MImOnScreenPlugins::autoDetectEnabledSubViews()
     Q_FOREACH (QString lang, langs) {
         // Convert to lower case, remove any .utf8 suffix, and use _ as
         // the separator between language and country.
-        lang = lang.split('.')[0].toLower().replace("-", "_");
+        lang = lang.split(QChar('.'))[0].toLower().replace(QChar('-'), QChar('_'));
 
         MImOnScreenPlugins::SubView subView(plugin, lang);
 
@@ -292,7 +292,7 @@ void MImOnScreenPlugins::autoDetectEnabledSubViews()
         }
 
         // See if we get a match if we expand "de" to "de_de"
-        if (!lang.contains('_')) {
+        if (!lang.contains(QChar('_'))) {
             subView.id = lang + "_" + lang;
             if (isSubViewAvailable(subView) && !to_enable.contains(subView)) {
                 to_enable << subView;

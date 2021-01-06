@@ -105,9 +105,9 @@ void MSharedAttributeExtensionManager::attributeValueChanged()
         return;
 
     const QString fullName = value->key();
-    const QString &target = QString::fromLatin1("/") + fullName.section('/', 1, 1);
-    const QString &targetItem = fullName.section('/', 2, -2);
-    const QString &attribute = fullName.section('/', -1, -1);
+    const QString &target = QString::fromLatin1("/") + fullName.section(QChar('/'), 1, 1);
+    const QString &targetItem = fullName.section(QChar('/'), 2, -2);
+    const QString &attribute = fullName.section(QChar('/'), -1, -1);
 
     Q_EMIT notifyExtensionAttributeChanged(clientIds, PluginSettings, target, targetItem, attribute, value->value());
 }

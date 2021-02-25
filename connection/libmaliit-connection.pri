@@ -4,14 +4,9 @@
 
 include($$PWD/../common/libmaliit-common.pri)
 
-# LSM is not weston compatible
-#include($$PWD/../weston-protocols/libmaliit-weston-protocols.pri)
-
 LIBS += $$TOP_DIR/lib/$$maliitStaticLib($${MALIIT_CONNECTION_LIB})
 POST_TARGETDEPS += $$TOP_DIR/lib/$$maliitStaticLib($${MALIIT_CONNECTION_LIB})
 INCLUDEPATH += $$TOP_DIR/connection $$OUT_PWD/$$TOP_DIR/connection
-
-qtHaveModule(dbus): QT += dbus
 
 wayland {
     CONFIG += link_pkgconfig

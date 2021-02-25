@@ -18,9 +18,6 @@
 #include "mimserver.h"
 #include "mimserveroptions.h"
 #include "mimglobalsettings.h"
-#ifndef NOXCB
-#include "xcbplatform.h"
-#endif
 #ifdef HAVE_WAYLAND
 #include "waylandplatform.h"
 #endif // HAVE_WAYLAND
@@ -132,14 +129,6 @@ QSharedPointer<MInputContextConnection> createConnection(const MImServerConnecti
         return QSharedPointer<MInputContextConnection>(Maliit::createWestonIMProtocolConnection());
     }
 #endif
-#ifdef HAVE_QTDBUS
-    if (options.overriddenAddress.isEmpty()) {
-        return QSharedPointer<MInputContextConnection>(Maliit::DBus::createInputContextConnectionWithDynamicAddress());
-    } else {
-        return QSharedPointer<MInputContextConnection>(Maliit::DBus::createInputContextConnectionWithFixedAddress(options.overriddenAddress,
-                                                                                                                  options.allowAnonymous));
-    }
-#endif
 
     // Return null pointer
     return QSharedPointer<MInputContextConnection>();
@@ -152,15 +141,7 @@ QSharedPointer<Maliit::AbstractPlatform> createPlatform()
         return QSharedPointer<Maliit::AbstractPlatform>(new Maliit::WaylandPlatform);
     } else
 #endif
-#ifndef NOXCB
-    if (QGuiApplication::platformName() == "xcb") {
-        return QSharedPointer<Maliit::AbstractPlatform>(new Maliit::XCBPlatform);
-    } else {
-#else
-    {
-#endif
-        return QSharedPointer<Maliit::AbstractPlatform>(new Maliit::UnknownPlatform);
-    }
+    return QSharedPointer<Maliit::AbstractPlatform>(new Maliit::UnknownPlatform);
 }
 
 } // unnamed namespace

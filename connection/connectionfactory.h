@@ -3,6 +3,8 @@
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  *
+ * Copyright (C) 2016-2021 LG Electronics, Inc.
+ *
  * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
@@ -12,23 +14,15 @@
  * of this file.
  */
 
-#ifndef MALIIT_DBUS_CONNECTIONFACTORY_H
-#define MALIIT_DBUS_CONNECTIONFACTORY_H
+#ifndef MALIIT_CONNECTIONFACTORY_H
+#define MALIIT_CONNECTIONFACTORY_H
 
 #include "minputcontextconnection.h"
 
 namespace Maliit {
-namespace DBus {
-
-MInputContextConnection *createInputContextConnectionWithDynamicAddress();
-MInputContextConnection *createInputContextConnectionWithFixedAddress(const QString &fixedAddress, bool allowAnonymous);
-
-} // namespace DBus
-
 #ifdef HAVE_WAYLAND
 MInputContextConnection *createWestonIMProtocolConnection();
 #endif
-
 } // namespace Maliit
 
-#endif // MALIIT_DBUS_CONNECTIONFACTORY_H
+#endif // MALIIT_CONNECTIONFACTORY_H

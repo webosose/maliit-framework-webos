@@ -1,6 +1,7 @@
 /* * This file is part of Maliit framework *
  *
  * Copyright (C) 2012 Canonical Ltd
+ * Copyright (C) 2013-2021 LG Electronics, Inc.
  *
  * Contact: maliit-discuss@lists.maliit.org
  *
@@ -1529,29 +1530,6 @@ void MInputContextWestonIMProtocolConnection::sendKeyEvent(const QKeyEvent &keyE
     }
 }
 
-/* Rather not yet implemented in Weston.
-void MInputContextWestonIMProtocolConnection::notifyImInitiatedHiding()
-{
-    Q_D(MInputContextWestonIMProtocol);
-
-    if (d->im_context) {
-        input_method_context_destroy(d->im_context);
-        d->im_context = 0;
-    }
-}
-
-void MInputContextWestonIMProtocolConnection::setGlobalCorrectionEnabled(bool enabled)
-{
-    if ((enabled != globalCorrectionEnabled()) && activeContext()) {
-        dbus_g_proxy_call_no_reply(activeContext()->inputContextProxy, "setGlobalCorrectionEnabled",
-                                   G_TYPE_BOOLEAN, enabled,
-                                   G_TYPE_INVALID);
-
-        MInputContextConnection::setGlobalCorrectionEnabled(enabled);
-    }
-}
-*/
-
 QString MInputContextWestonIMProtocolConnection::selection(bool &valid)
 {
     Q_D(MInputContextWestonIMProtocolConnection);
@@ -1559,84 +1537,6 @@ QString MInputContextWestonIMProtocolConnection::selection(bool &valid)
     valid = !d->selection.isEmpty();
     return d->selection;
 }
-/*
-void MInputContextWestonIMProtocolConnection::setLanguage(const QString &language)
-{
-    Q_D(MInputContextWestonIMProtocolConnection);
-
-    if (d->im_context) {
-        input_method_context_language(d->im_context, d->im_serial,
-                                      language.toUtf8().data());
-    }
-}
-*/
-/* Not implemented in Weston
-QRect MInputContextWestonIMProtocolConnection::preeditRectangle(bool &valid)
-{
-    GError *error = NULL;
-
-    gboolean gvalidity;
-    gint32 x, y, width, height;
-
-    if (activeContext() &&
-        dbus_g_proxy_call(activeContext()->inputContextProxy, "preeditRectangle", &error, G_TYPE_INVALID,
-                          G_TYPE_BOOLEAN, &gvalidity, G_TYPE_INT, &x, G_TYPE_INT, &y,
-                          G_TYPE_INT, &width, G_TYPE_INT, &height, G_TYPE_INVALID)) {
-        valid = gvalidity == TRUE;
-    } else {
-        if (error) { // dbus_g_proxy_call may return FALSE and not set error despite what the doc says
-            g_error_free(error);
-        }
-        valid = false;
-        return QRect();
-    }
-
-    return QRect(x, y, width, height);
-}
-
-void MInputContextWestonIMProtocolConnection::setRedirectKeys(bool enabled)
-{
-    if ((redirectKeysEnabled() != enabled) && activeContext()) {
-        dbus_g_proxy_call_no_reply(activeContext()->inputContextProxy, "setRedirectKeys",
-                                   G_TYPE_BOOLEAN, enabled ? TRUE : FALSE,
-                                   G_TYPE_INVALID);
-
-        MInputContextConnection::setRedirectKeys(enabled);
-    }
-}
-
-void MInputContextWestonIMProtocolConnection::setDetectableAutoRepeat(bool enabled)
-{
-    if ((detectableAutoRepeat() != enabled) && activeContext()) {
-        dbus_g_proxy_call_no_reply(activeContext()->inputContextProxy, "setDetectableAutoRepeat",
-                                   G_TYPE_BOOLEAN, enabled,
-                                   G_TYPE_INVALID);
-
-        MInputContextConnection::setDetectableAutoRepeat(enabled);
-    }
-}
-
-void MInputContextWestonIMProtocolConnection::invokeAction(const QString &action, const QKeySequence &sequence)
-{
-    if (activeContext()) {
-        DBusMessage *message = dbus_message_new_signal(DBusPath,
-                                                       "com.meego.inputmethod.uiserver1",
-                                                       "invokeAction");
-        char *action_string = strdup(action.toUtf8().constData());
-        char *sequence_string = strdup(sequence.toString(QKeySequence::PortableText).toUtf8().constData());
-        dbus_message_append_args(message,
-                                 DBUS_TYPE_STRING, &action_string,
-                                 DBUS_TYPE_STRING, &sequence_string,
-                                 DBUS_TYPE_INVALID);
-        free(action_string);
-        free(sequence_string);
-        dbus_connection_send(dbus_g_connection_get_connection(activeContext()->dbusConnection),
-                             message,
-                             NULL);
-        dbus_message_unref(message);
-    }
-}
-*/
 
 void MInputContextWestonIMProtocolConnection::setSelection(int start, int length)
 {
@@ -1651,94 +1551,3 @@ void MInputContextWestonIMProtocolConnection::setSelection(int start, int length
                                               byte_index, byte_length);
     }
 }
-
-/* Not implemented in Weston
-void MInputContextWestonIMProtocolConnection::updateInputMethodArea(const QRegion &region)
-{
-    if (activeContext()) {
-        QRect rect = region.boundingRect();
-        dbus_g_proxy_call_no_reply(activeContext()->inputContextProxy, "updateInputMethodArea",
-                                   G_TYPE_INT, rect.left(),
-                                   G_TYPE_INT, rect.top(),
-                                   G_TYPE_INT, rect.width(),
-                                   G_TYPE_INT, rect.height(),
-                                   G_TYPE_INVALID);
-    }
-}
-
-void MInputContextWestonIMProtocolConnection::notifyExtendedAttributeChanged(int id,
-                                                                     const QString &target,
-                                                                     const QString &targetItem,
-                                                                     const QString &attribute,
-                                                                     const QVariant &value)
-{
-    if (!activeContext()) {
-        return;
-    }
-    GValue valueData = {0, {{0}, {0}}};
-    if (!encodeVariant(&valueData, value)) {
-        return;
-    }
-
-    dbus_g_proxy_call_no_reply(activeContext()->inputContextProxy, "notifyExtendedAttributeChanged",
-                               G_TYPE_INT, id,
-                               G_TYPE_STRING, target.toUtf8().data(),
-                               G_TYPE_STRING, targetItem.toUtf8().data(),
-                               G_TYPE_STRING, attribute.toUtf8().data(),
-                               G_TYPE_VALUE, &valueData,
-                               G_TYPE_INVALID);
-    g_value_unset(&valueData);
-}
-
-void MInputContextWestonIMProtocolConnection::notifyExtendedAttributeChanged(const QList<int> &clientIds,
-                                                                     int id,
-                                                                     const QString &target,
-                                                                     const QString &targetItem,
-                                                                     const QString &attribute,
-                                                                     const QVariant &value)
-{
-    GValue valueData = {0, {{0}, {0}}};
-    if (!encodeVariant(&valueData, value)) {
-        return;
-    }
-    Q_FOREACH (int clientId, clientIds) {
-        dbus_g_proxy_call_no_reply(connectionObj(clientId)->inputContextProxy, "notifyExtendedAttributeChanged",
-                                   G_TYPE_INT, id,
-                                   G_TYPE_STRING, target.toUtf8().data(),
-                                   G_TYPE_STRING, targetItem.toUtf8().data(),
-                                   G_TYPE_STRING, attribute.toUtf8().data(),
-                                   G_TYPE_VALUE, &valueData,
-                                   G_TYPE_INVALID);
-    }
-    g_value_unset(&valueData);
-}
-
-
-void MInputContextWestonIMProtocolConnection::pluginSettingsLoaded(int clientId, const QList<MImPluginSettingsInfo> &info)
-{
-    MDBusGlibICConnection *client = connectionObj(clientId);
-    if (!client) {
-        return;
-    }
-
-    GType settingsType;
-    GPtrArray *settingsData;
-    if (!encodeSettings(&settingsType, &settingsData, info)) {
-        return;
-    }
-
-    dbus_g_proxy_call_no_reply(client->inputContextProxy, "pluginSettingsLoaded",
-                               settingsType, settingsData,
-                               G_TYPE_INVALID);
-    dbus_g_type_collection_peek_vtable(settingsType)->base_vtable.free_func(settingsType, settingsData);
-}
-
-
-void MInputContextWestonIMProtocolConnection::sendActivationLostEvent()
-{
-    if (activeContext()) {
-        dbus_g_proxy_call_no_reply(activeContext()->inputContextProxy, "activationLostEvent",
-                                   G_TYPE_INVALID);
-    }
-}
-*/

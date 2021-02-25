@@ -1,10 +1,7 @@
 # Enable Qt message log context
 DEFINES += QT_MESSAGELOGCONTEXT
 
-# For libmaliit
-MALIIT_LIB = maliit
-MALIIT_SETTINGS_LIB = maliit-settings
-MALIIT_HEADER = maliit
+# For maliit framework header
 MALIIT_FRAMEWORK_HEADER = maliit/framework
 
 include(defines.pri)
@@ -45,10 +42,6 @@ isEmpty(MALIIT_DATA_DIR) {
     MALIIT_DATA_DIR = $$DATADIR/maliit
 }
 
-isEmpty(DOCDIR) {
-    DOCDIR = $$DATADIR/doc
-}
-
 isEmpty(MALIIT_PLUGINS_DIR) {
     MALIIT_PLUGINS_DIR = $$LIBDIR/$$MALIIT_PLUGINS
 }
@@ -80,13 +73,6 @@ isEmpty(MALIIT_DEFAULT_PLUGIN) {
     MALIIT_DEFAULT_PLUGIN = libmaliit-keyboard-plugin.so
 }
 
-MALIIT_TEST_DATADIR = $$DATADIR/$$MALIIT_TEST_SUITE
-MALIIT_TEST_LIBDIR = $$LIBDIR/$$MALIIT_TEST_SUITE
-MALIIT_TEST_TMPDIR = /tmp/$$MALIIT_TEST_SUITE
-MALIIT_TEST_PLUGINS_DIR = $$MALIIT_TEST_LIBDIR/plugins
-
-DEFINES += MALIIT_TEST_PLUGINS_DIR=\\\"$$MALIIT_TEST_PLUGINS_DIR\\\"
-
 DEFINES += MALIIT_CONFIG_ROOT=\\\"$$MALIIT_CONFIG_ROOT\\\"
 
 DEFINES += MALIIT_FRAMEWORK_USE_INTERNAL_API
@@ -103,26 +89,6 @@ unix {
     MALIIT_ABI_VERSION_MAJOR=
 }
 
-win32 {
-    # qmake puts libraries in subfolders in build tree on Windows (installation is unaffected)
-    release {
-        MALIIT_STATIC_PREFIX=release/lib
-        MALIIT_DYNAMIC_PREFIX=release/
-    }
-    debug {
-        MALIIT_STATIC_PREFIX=debug/lib
-        MALIIT_DYNAMIC_PREFIX=debug/
-    }
-
-    # one would suspect this to be .lib, but qmake with mingw uses .a
-    MALIIT_STATIC_SUFFIX=.a
-
-    # qmake adds the first component of the version as part of the DLL name on Windows
-    MALIIT_ABI_VERSIONS=$$split(MALIIT_ABI_VERSION, ".")
-    MALIIT_ABI_VERSION_MAJOR=$$member(MALIIT_ABI_VERSIONS, 0)
-    MALIIT_DYNAMIC_SUFFIX=$${MALIIT_ABI_VERSION_MAJOR}.dll
-}
-
 defineReplace(maliitStaticLib) {
     return($${MALIIT_STATIC_PREFIX}$${1}$${MALIIT_STATIC_SUFFIX})
 }
@@ -131,27 +97,8 @@ defineReplace(maliitDynamicLib) {
     return($${MALIIT_DYNAMIC_PREFIX}$${1}$${MALIIT_DYNAMIC_SUFFIX})
 }
 
-mac {
-    # Do mac stuff here
-    M_BUILD_FEATURES = debug
-    M_PROFILE_PARTS =
-    INCLUDEPATH += include/
-}
-
-contains(QT_CONFIG,embedded) {
-    CONFIG += qws
-}
-
-qtHaveModule(dbus) {
-    DEFINES += HAVE_QTDBUS
-}
-
 wayland {
     DEFINES += HAVE_WAYLAND
-}
-
-noxcb {
-    DEFINES += NOXCB
 }
 
 MALIIT_INSTALL_PRF = $$[QMAKE_MKSPECS]/features
@@ -176,7 +123,6 @@ defineTest(outputFile) {
                 BINDIR \
                 INCLUDEDIR \
                 LIBDIR \
-                DOCDIR \
                 MALIIT_PLUGINS_DIR \
                 MALIIT_DATA_DIR \
                 MALIIT_PLUGINS_DATA_DIR \
@@ -185,23 +131,11 @@ defineTest(outputFile) {
                 MALIIT_ENABLE_MULTITOUCH \
                 MALIIT_DEFAULT_HW_PLUGIN \
                 MALIIT_DEFAULT_PLUGIN \
-                MALIIT_QUICK_FEATURE \
                 MALIIT_PLUGINS_LIB \
                 MALIIT_PLUGINS_HEADER \
-                MALIIT_LIB \
-                MALIIT_HEADER \
-                MALIIT_PLUGINS_QUICK_LIB \
-                MALIIT_PLUGINS_QUICK_HEADER \
-                MALIIT_PLUGINS_QUICK_FACTORY \
-                MALIIT_SETTINGS_LIB \
-                MALIIT_TEST_SUITE \
-                MALIIT_TEST_DATADIR \
-                MALIIT_TEST_LIBDIR \
-                MALIIT_TEST_TMPDIR \
                 MALIIT_IN_DIR \
                 MALIIT_OUT_DIR \
                 MALIIT_PACKAGENAME \
-                MALIIT_PACKAGE_BRIEF \
                 MALIIT_FRAMEWORK_HEADER \
                 MALIIT_SERVER_ARGUMENTS \
                 MALIIT_CONNECTION_LIB \

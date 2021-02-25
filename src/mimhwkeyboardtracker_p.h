@@ -3,6 +3,8 @@
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  *
+ * Copyright (C) 2021 LG Electronics, Inc.
+ *
  * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
@@ -19,15 +21,6 @@
 
 #include <QFile>
 
-#ifdef HAVE_CONTEXTSUBSCRIBER
-#include <QScopedPointer>
-#include <contextproperty.h>
-#else
-# ifdef Q_WS_MAEMO_5
-#  include "mimsettings.h"
-# endif
-#endif
-
 class MImHwKeyboardTracker;
 
 class MImHwKeyboardTrackerPrivate
@@ -41,12 +34,6 @@ public:
 
     void detectEvdev();
     void tryEvdevDevice(const char *device);
-
-#ifdef HAVE_CONTEXTSUBSCRIBER
-    QScopedPointer<ContextProperty> keyboardOpenProperty;
-#elif defined(Q_WS_MAEMO_5)
-    MImSettings keyboardOpenConf;
-#endif
 
     QFile *evdevFile;
     int evdevTabletModePending;

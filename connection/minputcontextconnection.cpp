@@ -3,6 +3,8 @@
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  *
+ * Copyright (C) 2015-2021 LG Electronics, Inc.
+ *
  * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
@@ -189,10 +191,6 @@ QRect MInputContextConnection::preeditRectangle(bool &valid)
 
 WId MInputContextConnection::winId()
 {
-#ifdef Q_WS_WIN
-    WId result = 0;
-    return result;
-#else
     QVariant winIdVariant = widgetState[WinId];
     // after transfer by dbus type can change
     switch (winIdVariant.type()) {
@@ -209,7 +207,6 @@ WId MInputContextConnection::winId()
             return winIdVariant.value<WId>();
     }
     return 0;
-#endif
 }
 
 
@@ -295,11 +292,9 @@ MInputContextConnection::updateWidgetInformation(
 
     widgetState = stateInfo;
 
-#ifndef Q_WS_WIN
     if (handleFocusChange) {
         Q_EMIT focusChanged(winId());
     }
-#endif
 
     Q_EMIT widgetStateChanged(connectionId, widgetState, oldState, handleFocusChange);
 }

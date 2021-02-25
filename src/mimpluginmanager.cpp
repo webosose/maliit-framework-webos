@@ -3,6 +3,8 @@
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  *
+ * Copyright (C) 2013-2021 LG Electronics, Inc.
+ *
  * Contact: maliit-discuss@lists.maliit.org
  *
  * Copyright (C) 2012 Canonical Ltd
@@ -28,8 +30,6 @@
 #include <maliit/settingdata.h>
 #include "windowgroup.h"
 #include "webosloginfo.h"
-
-#include <quick/inputmethodquickplugin.h>
 
 #include <QDir>
 #include <QPluginLoader>
@@ -149,48 +149,39 @@ Maliit::Plugins::InputMethodPlugin* MIMPluginManagerPrivate::loadPlugin(const QD
     QString pluginVersion("");
     QPluginLoader *loader = 0;
 
-    if (pluginInfo.suffix() == "qml") {
-        plugin = static_cast<Maliit::Plugins::InputMethodPlugin *>(new Maliit::InputMethodQuickPlugin(pluginPath, m_platform));
-        if (!plugin) {
-            qWarning() << "Could not create a plugin for" << pluginPath << "(blacklisted)";
-            blacklist.append(pluginPath);
-            return 0;
-        }
-    } else {
-        loader = new QPluginLoader(pluginPath);
-        if (!loader) {
-            qWarning() << "Failed to create QPluginLoader";
-            return 0;
-        }
-
-        if (loader->isLoaded()) {
-            plugin = qobject_cast<Maliit::Plugins::InputMethodPlugin *>(loader->instance());
-            qWarning() << pluginPath << "is already loaded in" << plugin;
-            delete loader;
-            return plugin;
-        }
-
-        qDebug() << "Loading file" << pluginPath;
-
-        QObject *pluginInstance = loader->instance();
-        if (!pluginInstance) {
-            qWarning() << "Error loading file as plugin" << pluginPath << "with an error" << loader->errorString() << "(blacklisted)";
-            blacklist.append(pluginPath);
-            delete loader;
-            return 0;
-        }
-
-        plugin = qobject_cast<Maliit::Plugins::InputMethodPlugin *>(pluginInstance);
-        if (!plugin) {
-            qWarning() << pluginPath << "is not a Maliit::Server::InputMethodPlugin (blacklisted)";
-            blacklist.append(pluginPath);
-            delete loader;
-            return 0;
-        }
-
-        pluginVersion = loader->metaData().value("MetaData").toObject().value("version").toString();
-        pluginVersion.prepend("-");
+    loader = new QPluginLoader(pluginPath);
+    if (!loader) {
+        qWarning() << "Failed to create QPluginLoader";
+        return 0;
     }
+
+    if (loader->isLoaded()) {
+        plugin = qobject_cast<Maliit::Plugins::InputMethodPlugin *>(loader->instance());
+        qWarning() << pluginPath << "is already loaded in" << plugin;
+        delete loader;
+        return plugin;
+    }
+
+    qDebug() << "Loading file" << pluginPath;
+
+    QObject *pluginInstance = loader->instance();
+    if (!pluginInstance) {
+        qWarning() << "Error loading file as plugin" << pluginPath << "with an error" << loader->errorString() << "(blacklisted)";
+        blacklist.append(pluginPath);
+        delete loader;
+        return 0;
+    }
+
+    plugin = qobject_cast<Maliit::Plugins::InputMethodPlugin *>(pluginInstance);
+    if (!plugin) {
+        qWarning() << pluginPath << "is not a Maliit::Server::InputMethodPlugin (blacklisted)";
+        blacklist.append(pluginPath);
+        delete loader;
+        return 0;
+    }
+
+    pluginVersion = loader->metaData().value("MetaData").toObject().value("version").toString();
+    pluginVersion.prepend("-");
 
     if (plugin->supportedStates().isEmpty()) {
         qWarning() << pluginPath << "is a plugin that does not support any state (blacklisted)";
@@ -269,9 +260,7 @@ bool MIMPluginManagerPrivate::unloadPlugin(Maliit::Plugins::InputMethodPlugin *p
         }
         qInfo() << "Plugin unloaded" << desc.pluginId << desc.loader->fileName();
     } else {
-        // created by Maliit::InputMethodQuickPlugin
-        delete static_cast<Maliit::InputMethodQuickPlugin *>(plugin);
-        qInfo() << "Plugin Destroyed" << desc.pluginId;
+        qWarning() << "Failed to find plugin loader" << desc.pluginId;
     }
 
     return true;

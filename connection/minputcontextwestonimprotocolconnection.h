@@ -1,6 +1,7 @@
 /* * This file is part of Maliit framework *
  *
  * Copyright (C) 2012 Canonical Ltd
+ * Copyright (C) 2013-2021 LG Electronics, Inc.
  *
  * Contact: maliit-discuss@lists.maliit.org
  *

@@ -3,6 +3,8 @@
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  *
+ * Copyright (C) 2021 LG Electronics, Inc.
+ *
  * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +22,6 @@
 #include <QtCore>
 
 class MImUpdateEventPrivate;
-class MImUpdateReceiver;
 
 /*! \ingroup pluginapi
  * \brief Monitor the input method properties sent by the application.
@@ -75,8 +76,6 @@ public:
 private:
     Q_DISABLE_COPY(MImUpdateEvent)
     Q_DECLARE_PRIVATE(MImUpdateEvent)
-
-    friend class MImUpdateReceiver; // Allows receiver to copy PIMPL instance.
 };
 
 #endif // MIMUPDATEEVENT_H

@@ -10,20 +10,14 @@ include(./config.pri)
         \\n\\t MALIIT_DEFAULT_HW_PLUGIN : Default hardware keyboard plugin \
         \\n\\t MALIIT_SERVER_ARGUMENTS : Arguments to use for starting maliit-server by D-Bus activation \
         \\nRecognised CONFIG flags: \
-        \\n\\t enable-contextkit : Build contextkit support (for monitoring hardware keyboard status) \
-        \\n\\t enable-dbus-activation : Enable dbus activation support for maliit-server \
         \\n\\t enable-pmloglib : Find and use pmloglib for logging if exists \
-        \\n\\t notests : Do not build tests \
-        \\n\\t nodoc : Do not build documentation\
-        \\n\\t local-install : Install everything underneath PREFIX, nothing to system directories reported by GTK+, Qt, DBus etc. \
+        \\n\\t local-install : Install everything underneath PREFIX, nothing to system directories reported by GTK+, Qt etc. \
         \\n\\t wayland : Compile with support for wayland \
-        \\n\\t qt5-inputcontext : Compile with Qt5 input context, replaces the one currently provided by Qt \
-        \\n\\t noxcb : Compile without xcb support \
         \\nInfluential environment variables: \
         \\n\\t PKG_CONFIG_PATH : Override standard directories to look for pkg-config information \
         \\nExamples: \
         \\n\\t qmake \
-        \\n\\t qmake PREFIX=/usr LIBDIR=/usr/lib64 CONFIG+=notests \
+        \\n\\t qmake PREFIX=/usr LIBDIR=/usr/lib64 CONFIG+=wayland \
         \\n\\t qmake PREFIX=/usr MALIIT_DEFAULT_PLUGIN=libmykeyboard.so
 
     !build_pass:system(echo -e \"$$help_string\")
@@ -37,29 +31,11 @@ CONFIG += ordered
 TEMPLATE = subdirs
 
 SUBDIRS = common
-qtHaveModule(dbus): SUBDIRS += dbus_interfaces
-
-# LSM is not weston compatible
-#wayland {
-#    SUBDIRS += weston-protocols
-#}
 
 contains(QT_MAJOR_VERSION, 4) {
     error("Qt 5 is required. For the Qt 4 input context see maliit-inputcontext-qt4. For a Qt 4 Maliit please use the 0.81 or 0.94-qt4 branches/release series instead")
 } else {
     SUBDIRS += connection src passthroughserver
-
-    !nodoc {
-        SUBDIRS += doc
-    }
-
-    !notests {
-        SUBDIRS += tests
-    }
-
-    !noexamples {
-        SUBDIRS += examples
-    }
 }
 
 QMAKE_EXTRA_TARGETS += check-xml

@@ -3,6 +3,8 @@
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  *
+ * Copyright (C) 2019-2021 LG Electronics, Inc.
+ *
  * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
@@ -30,8 +32,6 @@ namespace {
     };
 
     CommandLineParameter AvailableConnectionParameters[] = {
-        { "-allow-anonymous",   "Allow anonymous/unauthenticated use of DBus interface"},
-        { "-override-address",  "Override the DBus peer-to-peer address for input-context"},
         { "-instance",          "Set a numeric ID for this instance"},
         { "-no-ls2-service",    "Do not start ls2-service"}
     };
@@ -345,18 +345,7 @@ MImServerConnectionOptionsParser::parseParameter(const char *parameter,
 
             result = Ok;
 
-            if (!strcmp(parameter, "-allow-anonymous")) {
-                storage->allowAnonymous = true;
-                *argumentCount = 0;
-            } else if (!strcmp(parameter, "-override-address")) {
-                if (next) {
-                    storage->overriddenAddress = QString::fromUtf8(next);
-                    *argumentCount = 1;
-                } else {
-                    fprintf(stderr, "ERROR: No argument passed to -override-address\n");
-                    *argumentCount = 0;
-                }
-            } else if (!strcmp(parameter, "-instance")) {
+            if (!strcmp(parameter, "-instance")) {
                 if (next) {
                     QString param = QString::fromUtf8(next);
                     storage->instanceId = param.toInt();
@@ -391,8 +380,7 @@ void MImServerConnectionOptionsParser::printAvailableOptions(const char *format)
     }
 }
 MImServerConnectionOptions::MImServerConnectionOptions()
-    : allowAnonymous(false)
-    , instanceId(0)
+    : instanceId(0)
     , noLS2Service(false)
 {
     const ParserBasePtr p(new MImServerConnectionOptionsParser(this));

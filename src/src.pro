@@ -16,7 +16,6 @@ PLUGIN_HEADERS_PUBLIC = \
         maliit/plugins/attributeextension.h \
         maliit/plugins/extensionevent.h \
         maliit/plugins/updateevent.h \
-        maliit/plugins/updatereceiver.h \
         maliit/plugins/plugindescription.h \
         maliit/plugins/subviewdescription.h \
         maliit/plugins/abstractpluginsetting.h \
@@ -29,7 +28,6 @@ PLUGIN_SOURCES += \
         maliit/plugins/attributeextension.cpp \
         maliit/plugins/extensionevent.cpp \
         maliit/plugins/updateevent.cpp \
-        maliit/plugins/updatereceiver.cpp \
         maliit/plugins/plugindescription.cpp \
         maliit/plugins/subviewdescription.cpp \
 
@@ -79,12 +77,6 @@ SERVER_SOURCES += \
         abstractplatform.cpp \
         unknownplatform.cpp \
 
-!noxcb {
-    SERVER_HEADERS_PRIVATE += xcbplatform.h
-    SERVER_SOURCES += xcbplatform.cpp
-    PKGCONFIG += xcb xcb-xfixes
-}
-
 wayland {
     SERVER_HEADERS_PRIVATE += waylandplatform.h
     SERVER_SOURCES += waylandplatform.cpp
@@ -124,45 +116,24 @@ SETTINGS_SOURCES += \
         mimsettingsqsettings.cpp \
         mimsettingslunasettings.cpp \
 
-QUICK_HEADERS_PRIVATE += \
-        quick/maliitquick.h \
-        quick/inputmethodquick.h \
-        quick/inputmethodquickplugin.h \
-        quick/keyoverridequick.h \
-        quick/keyoverridequick_p.h \
-
-QUICK_SOURCES += \
-        quick/inputmethodquick.cpp \
-        quick/inputmethodquickplugin.cpp \
-        quick/keyoverridequick.cpp \
-
 HEADERS += \
         $$PLUGIN_HEADERS_PUBLIC \
         $$PLUGIN_HEADERS_PRIVATE \
         $$SERVER_HEADERS_PUBLIC \
         $$SERVER_HEADERS_PRIVATE \
-        $$SETTINGS_HEADERS_PRIVATE \
-        $$QUICK_HEADERS_PRIVATE
+        $$SETTINGS_HEADERS_PRIVATE
 
 SOURCES += \
         $$PLUGIN_SOURCES \
         $$SERVER_SOURCES \
-        $$SETTINGS_SOURCES \
-        $$QUICK_SOURCES
+        $$SETTINGS_SOURCES
 
 CONFIG += link_pkgconfig
 
 QT = core gui gui-private qml quick
-qtHaveModule(dbus): QT += dbus
 
-enable-contextkit {
-    PKGCONFIG += contextsubscriber-1.0
-    DEFINES += HAVE_CONTEXTSUBSCRIBER
-} else {
-    # libudev needed by non-contextkit MImHwKeyboardTracker
-    PKGCONFIG += libudev
-}
-
+# libudev needed by non-contextkit MImHwKeyboardTracker
+PKGCONFIG += libudev
 
 # coverage flags are off per default, but can be turned on via qmake COV_OPTION=on
 for(OPTION,$$list($$lower($$COV_OPTION))){
@@ -212,9 +183,6 @@ INSTALLS += \
     server_headers \
     install_prf \
     install_pkgconfig \
-
-# LSM is not weston compatible
-#include($$TOP_DIR/weston-protocols/libmaliit-weston-protocols.pri)
 
 include($$TOP_DIR/connection/libmaliit-connection.pri)
 include($$TOP_DIR/common/libmaliit-common.pri)

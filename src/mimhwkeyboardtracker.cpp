@@ -4,6 +4,7 @@
  * All rights reserved.
  *
  * Copyright (C) 2012 One Laptop per Child Association
+ * Copyright (C) 2021 LG Electronics, Inc.
  *
  * Contact: maliit-discuss@lists.maliit.org
  *
@@ -28,45 +29,16 @@
 #define BITS2BYTES(x) ((((x) - 1) / 8) + 1)
 #define TEST_BIT(bit, array) (array[(bit) / 8] & (1 << (bit) % 8))
 
-namespace {
-    const char * const keyboardPresent("/maemo/InternalKeyboard/Present");
-    const char * const keyboardOpen("/maemo/InternalKeyboard/Open");
-}
-
 MImHwKeyboardTrackerPrivate::MImHwKeyboardTrackerPrivate(MImHwKeyboardTracker *q_ptr) :
-#ifdef HAVE_CONTEXTSUBSCRIBER
-    keyboardOpenProperty(),
-#elif defined(Q_WS_MAEMO_5)
-    keyboardOpenConf("/system/osso/af/slide-open"),
-#else
     evdevTabletModePending(-1),
     evdevTabletMode(0),
-#endif
     present(false)
 {
-#ifdef HAVE_CONTEXTSUBSCRIBER
-    ContextProperty keyboardPresentProperty(keyboardPresent);
-    keyboardOpenProperty.reset(new ContextProperty(keyboardOpen));
-    keyboardPresentProperty.waitForSubscription(true);
-    keyboardOpenProperty->waitForSubscription(true);
-    present = keyboardPresentProperty.value().toBool();
-    if (present) {
-        QObject::connect(keyboardOpenProperty.data(), SIGNAL(valueChanged()),
-                         q_ptr, SIGNAL(stateChanged()));
-    } else {
-        keyboardOpenProperty.reset();
-    }
-#elif defined(Q_WS_MAEMO_5)
-    present = true;
-    QObject::connect(&keyboardOpenConf, SIGNAL(valueChanged()),
-                     q_ptr, SIGNAL(stateChanged()));
-#else
     Q_UNUSED(q_ptr);
     QObject::connect(this, SIGNAL(stateChanged()),
                      q_ptr, SIGNAL(stateChanged()));
 
     detectEvdev();
-#endif
 }
 
 void MImHwKeyboardTrackerPrivate::detectEvdev()
@@ -218,11 +190,6 @@ bool MImHwKeyboardTracker::isOpen() const
         return false;
     }
 
-#ifdef HAVE_CONTEXTSUBSCRIBER
-    return d->keyboardOpenProperty->value().toBool();
-#elif defined(Q_WS_MAEMO_5)
-    return d->keyboardOpenConf.value().toBool();
-#else
     // If we found a talet mode switch, we report that the hardware keyboard
     // is available when the system is not in tablet mode (switch closed),
     // and is not available otherwise (switch open).
@@ -230,5 +197,4 @@ bool MImHwKeyboardTracker::isOpen() const
         return !d->evdevTabletMode;
 
     return false;
-#endif
 }

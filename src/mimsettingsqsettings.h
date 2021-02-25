@@ -2,6 +2,7 @@
  *
  * Copyright (C) 2012 Mattia Barbon <mattia@develer.com>
  * Copyright (C) 2012 Canonical Ltd
+ * Copyright (C) 2017-2021 LG Electronics, Inc.
  *
  * Contact: maliit-discuss@lists.maliit.org
  *

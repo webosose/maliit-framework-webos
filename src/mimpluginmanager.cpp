@@ -622,17 +622,15 @@ bool MIMPluginManagerPrivate::trySwitchPlugin(Maliit::SwitchDirection direction,
 {
     Maliit::Plugins::InputMethodPlugin *newPlugin = replacement.key();
 
-    if (activePlugins.contains(newPlugin)) {
-        qWarning() << plugins.value(newPlugin).pluginId
-                 << "is already active";
-        return false;
-    }
-
     if (!newPlugin) {
         qWarning() << "new plugin invalid";
         return false;
     }
 
+    if (activePlugins.contains(newPlugin)) {
+        qWarning() << plugins.value(newPlugin).pluginId
+                 << "is already active, but keep trying switch for sure";
+    }
 
     // switch to other plugin if it could handle any state
     // handled by current plugin just now

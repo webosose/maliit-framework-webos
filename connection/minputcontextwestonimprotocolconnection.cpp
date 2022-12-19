@@ -897,7 +897,7 @@ void MInputContextWestonIMProtocolConnectionPrivate::processKeyMap(uint32_t form
 {
     if (format == WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1) {
         char *keymapArea = static_cast<char*>(mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0));
-        if (keymapArea == MAP_FAILED) {
+        if (keymapArea == NULL || keymapArea == MAP_FAILED) {
             close(fd);
             qWarning() << "failed to mmap() " << (unsigned long) size << " bytes\n";
             return;

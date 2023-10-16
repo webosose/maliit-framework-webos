@@ -10,6 +10,7 @@
  * of this file.
  */
 
+#include <QDebug>
 
 #include "msharedattributeextensionmanager.h"
 #include "mimsettings.h"
@@ -50,6 +51,10 @@ void MSharedAttributeExtensionManager::registerPluginSetting(const QString &full
 
 void MSharedAttributeExtensionManager::handleClientDisconnect(unsigned int clientId)
 {
+    if (clientId > INT_MAX) {
+        qWarning() << "This conversion from uint to int may result in data lost, because the value exceeds INT_MAX. Before: " << clientId << ", After: " << INT_MAX;
+        return;
+    }
     clientIds.removeOne(clientId);
 }
 
@@ -58,8 +63,10 @@ void MSharedAttributeExtensionManager::handleAttributeExtensionRegistered(unsign
 {
     Q_UNUSED(attributeExtension);
 
-    if (id != PluginSettings)
+    if (id != PluginSettings || clientId > INT_MAX) {
+        qWarning() << "This conversion from uint to int may result in data lost, because the value exceeds INT_MAX. Before: " << clientId << ", After: " << INT_MAX;
         return;
+    }
     if (clientIds.contains(clientId))
         return;
 
@@ -68,8 +75,10 @@ void MSharedAttributeExtensionManager::handleAttributeExtensionRegistered(unsign
 
 void MSharedAttributeExtensionManager::handleAttributeExtensionUnregistered(unsigned int clientId, int id)
 {
-    if (id != PluginSettings)
+    if (id != PluginSettings || clientId > INT_MAX) {
+        qWarning() << "This conversion from uint to int may result in data lost, because the value exceeds INT_MAX. Before: " << clientId << ", After: " << INT_MAX;
         return;
+    }
 
     clientIds.removeOne(clientId);
 }

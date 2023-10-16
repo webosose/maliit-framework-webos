@@ -18,6 +18,7 @@
 // This file is based on mkeyboardstatetracker.cpp from libmeegotouch
 
 #include <QSocketNotifier>
+#include <QDebug>
 
 #include <libudev.h>
 #include <linux/input.h>
@@ -89,8 +90,14 @@ void MImHwKeyboardTrackerPrivate::evdevEvent()
     struct input_event ev;
 
     qint64 len = evdevFile->read((char *) &ev, sizeof(ev));
-    if (len != sizeof(ev))
+    if (len < 0) {
+        qWarning() << "This conversion from long long to usinged long long may result in data lost. len:" << len;
         return;
+    }
+    if (len != sizeof(ev)) {
+        qWarning() << "Failed to read event:" << len;
+        return;
+    }
 
     // We wait for a SYN before "committing" the new state, just in case.
     if (ev.type == EV_SW && ev.code == SW_TABLET_MODE) {

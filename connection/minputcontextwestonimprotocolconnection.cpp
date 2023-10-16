@@ -827,6 +827,10 @@ void MInputContextWestonIMProtocolConnectionPrivate::handleRegistryGlobal(uint32
     if (!strcmp(interface, "input_method")) {
         im = static_cast<input_method *>(wl_registry_bind(registry, name, &input_method_interface, 2));
         input_method_add_listener(im, &maliit_input_method_listener, this);
+        if (m_displayId < 0 || m_displayId > USHRT_MAX) {
+            qWarning() << "This conversion from int to ushort may result in data lost, because the value exceeds USHRT_MAX. Before: " << m_displayId << ", After: " << USHRT_MAX;
+            return;
+        }
         input_method_set_display_id(im, m_displayId);
     }
 }
@@ -848,6 +852,10 @@ inputMethodKeyboardKeyMap(void *data,
     MInputContextWestonIMProtocolConnectionPrivate *d =
         static_cast<MInputContextWestonIMProtocolConnectionPrivate *>(data);
 
+    if (fd < 0 || fd > USHRT_MAX) {
+        qWarning() << "This conversion from int to ushort may result in data lost, because the value exceeds USHRT_MAX. Before: " << fd << ", After: " << USHRT_MAX;
+        return;
+    }
     d->processKeyMap(format, fd, size);
 }
 
@@ -896,6 +904,10 @@ const wl_keyboard_listener input_method_keyboard_listener = {
 void MInputContextWestonIMProtocolConnectionPrivate::processKeyMap(uint32_t format, uint32_t fd, uint32_t size)
 {
     if (format == WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1) {
+        if ( fd > INT_MAX) {
+            qWarning() << "This conversion from uint to int may result in data lost, because the value exceeds INT_MAX. Before: " << fd << ", After: " << INT_MAX;
+            return;
+        }
         char *keymapArea = static_cast<char*>(mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0));
         if (keymapArea == NULL || keymapArea == MAP_FAILED) {
             close(fd);
@@ -1092,7 +1104,7 @@ void MInputContextWestonIMProtocolConnectionPrivate::processKeyEvent(uint32_t se
         return;
     }
 
-    const int EVDEV_OFFSET = 8;
+    const uint32_t EVDEV_OFFSET = 8;
 
     QEvent::Type keyType = (state == WL_KEYBOARD_KEY_STATE_RELEASED ? QEvent::KeyRelease : QEvent::KeyPress);
 #ifdef HAS_LIBIM
@@ -1100,6 +1112,10 @@ void MInputContextWestonIMProtocolConnectionPrivate::processKeyEvent(uint32_t se
 #endif
 
     const xkb_keysym_t *syms;
+    if (UINT_MAX - key < EVDEV_OFFSET) {
+        qWarning() << "Sum EVDEV_OFFSET and key value exceeds UINT_MAX. Before: " << key + EVDEV_OFFSET << ", After: " << UINT_MAX;
+        return;
+    }
     int num_syms = xkb_key_get_syms(xkb.state, key + EVDEV_OFFSET, &syms);
 
     xkb_keysym_t sym = XKB_KEY_NoSymbol;
@@ -1232,8 +1248,21 @@ void MInputContextWestonIMProtocolConnectionPrivate::handleInputMethodContextSur
 
     qDebug() << "text:" << text << "cursor:" << cursor << "anchor:" << anchor;
 
-    int len = strlen(text);
+    unsigned long textlen = strlen(text);
+    if (textlen > INT_MAX) {
+        qWarning() << "This conversion from unsigned long to int may result in data lost, because the value exceeds INT_MAX. Before: " << textlen << ", After: " << INT_MAX;
+        return;
+    }
+    int len = (int) textlen;
+    if (cursor > INT_MAX) {
+        qWarning() << "This conversion from unsigned int to int may result in data lost, because the value exceeds INT_MAX. Before: " << cursor << ", After: " << INT_MAX;
+        return;
+    }
     cursor = len < (int) cursor ? len : cursor;
+    if (anchor > INT_MAX) {
+        qWarning() << "This conversion from unsigned int to int may result in data lost, because the value exceeds INT_MAX. Before: " << anchor << ", After: " << INT_MAX;
+        return;
+    }
     anchor = len < (int) anchor ? len : anchor;
 
     state_info[SurroundingTextAttribute] = QString(text);
@@ -1246,6 +1275,10 @@ void MInputContextWestonIMProtocolConnectionPrivate::handleInputMethodContextSur
         uint32_t begin(qMin(cursor, anchor));
         uint32_t end(qMax(cursor, anchor));
 
+        if (INT_MAX - end < begin) {
+            qWarning() << "Sum begin and end value exceeds INT_MAX. Before: " << begin + end << ", After: " << INT_MAX;
+            return;
+        }
         selection = QString::fromUtf8(text + begin, end - begin);
     }
     q->updateWidgetInformation(connection_id, state_info, false);
@@ -1267,7 +1300,15 @@ void MInputContextWestonIMProtocolConnectionPrivate::handleInputMethodContextCon
 
     qDebug() << "hint:" << hint << "purpose:" << purpose;
 
+    if (purpose > INT_MAX) {
+        qWarning() << "This conversion from unsigned int to int may result in data lost, because the value exceeds INT_MAX. Before: " << purpose << ", After: " << INT_MAX;
+        return;
+    }
     state_info[ContentTypeAttribute] = westonPurposeToMaliit(static_cast<text_model_content_purpose>(purpose));
+    if (hint > INT_MAX) {
+        qWarning() << "This conversion from unsigned int to int may result in data lost, because the value exceeds INT_MAX. Before: " << hint << ", After: " << INT_MAX;
+        return;
+    }
     state_info[AutoCapitalizationAttribute] = matchesFlag(hint, TEXT_MODEL_CONTENT_HINT_AUTO_CAPITALIZATION);
     state_info[CorrectionAttribute] = matchesFlag(hint, TEXT_MODEL_CONTENT_HINT_AUTO_CORRECTION);
     state_info[PredictionAttribute] = matchesFlag(hint, TEXT_MODEL_CONTENT_HINT_AUTO_COMPLETION);
@@ -1285,6 +1326,10 @@ void MInputContextWestonIMProtocolConnectionPrivate::handleInputMethodContextEnt
 
     qDebug() << "enter_key_type:" << enter_key_type;
 
+    if (enter_key_type > INT_MAX) {
+        qWarning() << "This conversion from unsigned int to int may result in data lost, because the value exceeds INT_MAX. Before: " << enter_key_type << ", After: " << INT_MAX;
+        return;
+    }
     state_info[EnterKeyTypeAttribute] = westonEnterKeyTypeToMaliit(static_cast<text_model_enter_key_type>(enter_key_type));
 
     q->updateWidgetInformation(connection_id, state_info, false);
@@ -1366,11 +1411,19 @@ void MInputContextWestonIMProtocolConnection::sendPreeditString(const QString &s
                                                          replace_start, replace_length);
         }
         Q_FOREACH (const Maliit::PreeditTextFormat& format, preedit_formats) {
+            if (format.start < 0 || format.length < 0) {
+                qWarning() << "This conversion from int to uint may result in data lost, because the value is less than 0. Before: " << format.start << ", " << format.length << ", After: " << 0;
+                return;
+            }
             input_method_context_preedit_styling(d->im_context, d->im_serial,
                                                  format.start, format.length,
                                                  face_to_uint (format.preeditFace));
         }
         if (cursor_pos < 0) {
+            if (string.size() > INT_MAX + cursor_pos) {
+                qWarning() << "string.size() + cursor_pos value exceeds INT_MAX";
+                return;
+            }
             cursor_pos = string.size() + 1 - cursor_pos;
         }
         input_method_context_preedit_cursor(d->im_context, d->im_serial,
@@ -1523,7 +1576,12 @@ void MInputContextWestonIMProtocolConnection::sendKeyEvent(const QKeyEvent &keyE
 
         qDebug() << "key_sym:" << key_sym << "state:" << state << "mod mask:" << mod_mask;
 
-        input_method_context_keysym(d->im_context, d->im_serial, keyEvent.timestamp(),
+        unsigned long long timestamp = keyEvent.timestamp();
+        if (timestamp > UINT_MAX) {
+            qWarning() << "This conversion from unsigned long to usigned int may result in data lost, because the value exceeds UINT_MAX. Before: " << timestamp << ", After: " << UINT_MAX;
+            return;
+        }
+        input_method_context_keysym(d->im_context, d->im_serial, (uint32_t) timestamp,
                                     key_sym, state, mod_mask);
     }
 }

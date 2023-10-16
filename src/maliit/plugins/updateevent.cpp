@@ -40,9 +40,12 @@ bool MImUpdateEventPrivate::isFlagSet(Qt::InputMethodHint hint,
     bool result = false;
 
     if (update.contains(Maliit::Internal::inputMethodHints)) {
-        const Qt::InputMethodHints hints(static_cast<int>(
-                                             update.value(Maliit::Internal::inputMethodHints).toLongLong()));
-
+        long long int inputMethodHint = update.value(Maliit::Internal::inputMethodHints).toLongLong();
+        if (inputMethodHint < INT_MIN || inputMethodHint > INT_MAX) {
+            qWarning() << "This conversion from long long int to int may result in data lost, because the value exceeds INT range. inputMethodHint: " << inputMethodHint;
+            return false;
+        }
+        const Qt::InputMethodHints hints(static_cast<int>(inputMethodHint));
         result = (hints & hint);
     }
 
@@ -91,8 +94,12 @@ QStringList MImUpdateEvent::propertiesChanged() const
 Qt::InputMethodHints MImUpdateEvent::hints(bool *changed) const
 {
     Q_D(const MImUpdateEvent);
-    return Qt::InputMethodHints(static_cast<int>(
-        d->extractProperty(Maliit::Internal::inputMethodHints, changed).toLongLong()));
+    long long int inputMethodHint = d->extractProperty(Maliit::Internal::inputMethodHints, changed).toLongLong();
+    if (inputMethodHint > INT_MAX || inputMethodHint < INT_MIN) {
+        qWarning() << "This conversion from long long int to int may result in data lost, because the value exceeds INT range. inputMethodHint: " << inputMethodHint;
+        return Qt::ImhNone;
+    }
+    return Qt::InputMethodHints(static_cast<int>(inputMethodHint));
 }
 
 bool MImUpdateEvent::westernNumericInputEnforced(bool *changed) const

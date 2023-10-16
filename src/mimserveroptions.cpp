@@ -20,6 +20,7 @@
 #include <string.h>
 
 #include <QtGlobal>
+#include <QDebug>
 #include <QList>
 #include <QExplicitlySharedDataPointer>
 #include <QSharedData>
@@ -218,7 +219,10 @@ bool parseCommandLine(int argc, const char * const * argv)
         }
 
         if (parsingResult == MImServerOptionsParserBase::Invalid) {
-            fprintf(stderr, "Invalid parameter '%s'\n", argv[n]);
+            if (fprintf(stderr, "Invalid parameter '%s'\n", argv[n]) < 0) {
+                qDebug() << "failed to send formatted output to stream";
+                return false;
+            }
             allRecognized = false;
         }
     }
@@ -228,8 +232,14 @@ bool parseCommandLine(int argc, const char * const * argv)
 
 void printHelpMessage()
 {
-    fprintf(stderr, "\nUsage: %s [options]\n", programName);
-    fprintf(stderr, "Available options:\n");
+    if (fprintf(stderr, "\nUsage: %s [options]\n", programName) < 0) {
+        qDebug() << "failed to send formatted output to stream";
+        return;
+    }
+    if (fprintf(stderr, "Available options:\n") < 0) {
+        qDebug() << "failed to send formatted output to stream";
+        return;
+    }
 
     Q_FOREACH (const ParserBasePtr &base, parsers) {
         base->printAvailableOptions(HelpFormat);
@@ -309,7 +319,8 @@ MImServerCommonOptionsParser::parseParameter(const char *parameter,
 
 void MImServerCommonOptionsParser::printAvailableOptions(const char *format)
 {
-    fprintf(stderr, format, "-help", "Show usage information");
+    if (fprintf(stderr, format, "-help", "Show usage information") < 0)
+        qDebug() << "failed to send formatted output to stream";
 }
 
 MImServerCommonOptions::MImServerCommonOptions()
@@ -351,14 +362,20 @@ MImServerConnectionOptionsParser::parseParameter(const char *parameter,
                     storage->instanceId = param.toInt();
                     *argumentCount = 1;
                 } else {
-                    fprintf(stderr, "ERROR: No argument passed to -instance\n");
+                    if (fprintf(stderr, "ERROR: No argument passed to -instance\n") < 0) {
+                        qDebug() << "failed to send formatted output to stream";
+                        return Invalid;
+                    }
                     *argumentCount = 0;
                 }
             } else if (!strcmp(parameter, "-no-ls2-service")) {
                 storage->noLS2Service = true;
                 *argumentCount = 0;
             } else {
-                fprintf(stderr, "ERROR: connection option %s declared but unhandled\n", parameter);
+                if (fprintf(stderr, "ERROR: connection option %s declared but unhandled\n", parameter) < 0) {
+                    qDebug() << "failed to send formatted output to stream";
+                    return Invalid;
+                }
             }
 
             break;
@@ -374,8 +391,10 @@ void MImServerConnectionOptionsParser::printAvailableOptions(const char *format)
 
     for (int i = 0; i < count; ++i) {
         if (AvailableConnectionParameters[i].description) {
-            fprintf(stderr, format, AvailableConnectionParameters[i].name,
-                    AvailableConnectionParameters[i].description);
+            if (fprintf(stderr, format, AvailableConnectionParameters[i].name, AvailableConnectionParameters[i].description) < 0) {
+                qDebug() << "failed to send formatted output to stream";
+                return;
+            }
         }
     }
 }

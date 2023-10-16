@@ -300,6 +300,10 @@ void IMELunaService::insertText(const QString& text, bool replace, ssize_t lengt
             // Replace some text
             m_connection->sendCommitString(text, -length, length);
         } else {
+            if (cursorPos == INT_MIN) {
+                qWarning() << "-cursorPos operation happens overflow. cursorPos: " << INT_MIN;
+                return;
+            }
             // Replace all text
             m_connection->sendCommitString(text, -cursorPos, surroundingText.length());
         }
@@ -320,7 +324,12 @@ void IMELunaService::deleteCharacters(int numChars, DeleteMode mode)
     if (mode == DirectMode) {
         // Generally less reliable in practice but more consistent
         numChars = std::min(numChars, cursorPos);
-        m_connection->sendCommitString("", -numChars, numChars);
+        if (numChars == INT_MIN) {
+            qWarning() << "-numChars operation happens overflow. numChars: " << INT_MIN;
+            return;
+        } else {
+            m_connection->sendCommitString("", -numChars, numChars);
+        }
     } else {
         bool valid = false;
         bool hasSelection = m_connection->hasSelection(valid);

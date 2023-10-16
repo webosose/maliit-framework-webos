@@ -1728,7 +1728,12 @@ void MIMPluginManager::handleWidgetStateChanged(unsigned int clientId,
         }
     }
 
-    const Qt::InputMethodHints lastHints(static_cast<int>(newState.value(Maliit::Internal::inputMethodHints).toLongLong()));
+    long long int inputMethodHint = newState.value(Maliit::Internal::inputMethodHints).toLongLong();
+    if (inputMethodHint < INT_MIN || inputMethodHint > INT_MAX) {
+        qWarning() << "This conversion from long long int to int may result in data lost, because the value exceeds INT range. inputMethodHint: " << inputMethodHint;
+        return;
+    }
+    const Qt::InputMethodHints lastHints(static_cast<int>(inputMethodHint));
     MImUpdateEvent ev(newState, changedProperties, lastHints);
 
     // general notification last

@@ -112,19 +112,24 @@ void outputMessages(QtMsgType type,
     switch (type) {
     case QtDebugMsg:
         if (isDebugEnabled())
-            fprintf(stderr, "DEBUG: %s\n", raw);
+            if (fprintf(stderr, "DEBUG: %s\n", raw) < 0)
+                return;
         break;
     case QtInfoMsg:
-        fprintf(stderr, "INFO: %s\n", raw);
+        if (fprintf(stderr, "INFO: %s\n", raw) < 0)
+            return;
         break;
     case QtWarningMsg:
-        fprintf(stderr, "WARNING: %s\n", raw);
+        if (fprintf(stderr, "WARNING: %s\n", raw) < 0)
+            return;
         break;
     case QtCriticalMsg:
-        fprintf(stderr, "CRITICAL: %s\n", raw);
+        if (fprintf(stderr, "CRITICAL: %s\n", raw) < 0)
+            return;
         break;
     case QtFatalMsg:
-        fprintf(stderr, "FATAL: %s\n", raw);
+        if (fprintf(stderr, "FATAL: %s\n", raw) < 0)
+            return;
         abort();
     }
 }
